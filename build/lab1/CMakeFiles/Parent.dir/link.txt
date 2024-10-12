@@ -1,1 +1,0 @@
-/usr/local/bin/c++ CMakeFiles/Parent.dir/src/parent.cpp.o -o Parent  liblab1_lib.a 

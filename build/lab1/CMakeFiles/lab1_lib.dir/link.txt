@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblab1_lib.a CMakeFiles/lab1_lib.dir/src/parent.cpp.o CMakeFiles/lab1_lib.dir/src/commonchild.cpp.o CMakeFiles/lab1_lib.dir/src/child1.cpp.o CMakeFiles/lab1_lib.dir/src/child2.cpp.o CMakeFiles/lab1_lib.dir/main.cpp.o
-/usr/bin/ranlib liblab1_lib.a
