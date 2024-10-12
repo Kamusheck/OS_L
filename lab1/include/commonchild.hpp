@@ -5,8 +5,8 @@
 #include <sstream>
 #include <string>
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef COMMON_HPP  
+#define COMMON_HPP
 
 
 std::string child1_process_func(const std::string& input);

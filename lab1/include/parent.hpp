@@ -2,8 +2,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#ifndef PARENT_H
-#define PARENT_H
+#ifndef PARENT_HPP
+#define PARENT_HPP
 
 void Parent();
 

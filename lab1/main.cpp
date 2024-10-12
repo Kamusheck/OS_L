@@ -1,7 +1,7 @@
-#include <iostream>
-#include "parent.h"
+#include "parent.hpp"
 
 int main() {
     Parent();
     return 0;
 }
+  

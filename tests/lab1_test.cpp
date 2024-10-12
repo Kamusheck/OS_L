@@ -1,76 +1,73 @@
 #include "parent.hpp"
 #include "commonchild.hpp"
+#include "child1.hpp"
+#include "child2.hpp"
 #include <fcntl.h>
 #include <gtest/gtest.h>
 #include <unistd.h>
+#include <sstream>
 
-const char *PATH_TO_CHILD1 = getenv("PATH_TO_CHILD1");
-const char *PATH_TO_CHILD2 = getenv("PATH_TO_CHILD2");
 
-// Test ToLowerCase function
-TEST(CommonTests,TolowerCase) {
-    char str[] = "HeLLo WoRLd!";
-    child1_process_func(str);
-    EXPECT_STREQ(str, "hello world!");
+TEST(UtilsTests, ToLowerCaseTest) {
+    std::string input = "Phrase Check";
+    std::string expected = "phrase check";
+    EXPECT_EQ(child1_process_func(input), expected);
 }
 
-// Test ReplaceSpacesWithUnderscore function
-TEST(CommonTests, DeleteProbels) {
-    char str[] = "Hello  World!";
-    child2_process_func(str);
-    EXPECT_STREQ(str, "Hello World!");
+
+TEST(UtilsTests, RemoveDoubleSpacesTest) {
+    std::string input = "Phrase  Check";
+    std::string expected = "Phrase Check";
+    EXPECT_EQ(child2_process_func(input), expected);
 }
 
-void SimulateInputOutputForParent(const std::string &testInput,
-                                  std::string &output) {
-    // Redirect input
+
+void SimulateInputOutputForParent(const std::string &testInput, std::string &output) {
     std::istringstream inputStream(testInput);
     std::streambuf *originalCinBuffer = std::cin.rdbuf(inputStream.rdbuf());
-    // Redirect output
     std::ostringstream outputStream;
     std::streambuf *originalCoutBuffer = std::cout.rdbuf(outputStream.rdbuf());
 
-    Parent(PATH_TO_CHILD1, PATH_TO_CHILD2);
+ 
+    Parent();
 
-    // Restore input
     std::cin.rdbuf(originalCinBuffer);
-    // Restore output
     std::cout.rdbuf(originalCoutBuffer);
+    
+
     output = outputStream.str();
-    // Remove hints from output
-    size_t pos = output.find("Enter your text: ");
+    
+
+    size_t pos = output.find("enter phrase or exit to finish: ");
     if (pos != std::string::npos) {
-        output.erase(pos, strlen("Enter your text: "));
+        output.erase(pos, strlen("enter phrase or exit to finish: "));
     }
 }
 
-void RunParentChildIntegrationTest(const std::string &input,
-                                   const std::string &expectedOutput) {
+void RunParentChildIntegrationTest(const std::string &input, const std::string &expectedOutput) {
     std::string output;
-    SimulateInputOutputForParent(input, output);
+    SimulateInputOutputForParent(input + "nexit", output); // Добавляем exit для завершения
     EXPECT_EQ(output, expectedOutput);
 }
 
-TEST(ParentChildIntegrationTests, ParentChild1Child2Test1) {
-    RunParentChildIntegrationTest("New  phrAse", "new phrase\n");
+
+TEST(ParentChildIntegrationTests, SimpleLowerCase) {
+    RunParentChildIntegrationTest("Hello World", "hello world\n");
 }
 
-TEST(ParentChildIntegrationTests, ParentChild1Child2Test2) {
-    RunParentChildIntegrationTest("normal format", "normal format\n");
+TEST(ParentChildIntegrationTests, NumbersWithSpaces) {
+    RunParentChildIntegrationTest("1  2  3", "1 2 3\n");
 }
 
-TEST(ParentChildIntegrationTests, ParentChild1Child2Test3) {
-    RunParentChildIntegrationTest("A A aaabb  bb cd ", "a a aaa bb cd\n");
+TEST(ParentChildIntegrationTests, MixedCaseAndSpaces) {
+    RunParentChildIntegrationTest("HeLLo   wORLD", "hello world\n");
 }
 
-TEST(ParentChildIntegrationTests, ParentChild1Child2Test4) {
-    RunParentChildIntegrationTest(" ", "\n");
-}
-
-TEST(ParentChildIntegrationTests, ParentChild1Child2Test5) {
+TEST(ParentChildIntegrationTests, EmptyInput) {
     RunParentChildIntegrationTest("", "\n");
 }
-// Main entry point for tests
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

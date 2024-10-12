@@ -1,6 +1,6 @@
-#ifndef CHILD2_H
-#define CHILD2_H
+#ifndef CHILD2_HPP
+#define CHILD2_HPP
 
 void Child2(int read_fd, int write_fd);
 
-#endif
+#endif // CHILD2_HPP
