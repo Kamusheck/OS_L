@@ -1,0 +1,1 @@
+/usr/local/bin/c++ CMakeFiles/Child2.dir/src/child2.cpp.o -o Child2  liblab1_lib.a 
