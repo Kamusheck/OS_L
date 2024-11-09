@@ -1,50 +1,43 @@
-#include <unistd.h>
-#include <cstring>
-#include <string>
-#include <iostream>
-#include <functional>
-#include <sstream>
+#include "commonchild.hpp"
 
-void data_treatment(int read_fd, int write_fd, std::function<std::string(const std::string&)> process_func) {
-    close(write_fd); 
-    char buffer[256];
-    
-    while (true) {
-        ssize_t bytesRead = read(read_fd, buffer, sizeof(buffer) - 1); 
-        if (bytesRead <= 0) {
-            break; 
-        }
-        
-        buffer[bytesRead] = '0'; 
-        std::string input(buffer); 
-        std::string result = process_func(input); 
-        
-
-        write(write_fd, result.c_str(), result.size() + 1); 
+void DataTreatment(int argc, char *argv[], void(*ChildFunc)(char*)) {
+    if(argc<3){
+        std::cerr <<"Не то количество аргументов" <<std::endl;
+        exit(EXIT_FAILURE);
     }
-    
-    close(read_fd); 
+    int read_f = atoi(argv[1]);
+    int write_f = atoi(argv[2]);
+    char input[256];
+    if(read(read_f, input, sizeof(input))== -1){
+        perror("Проблема чтение их канальчика, проблема на этапе обработки и передачи в конкреьный ффункционал chil");
+        exit(EXIT_FAILURE);
+    }
+    ChildFunc(input);
+    if (write(write_f, input, strlen(input)+ 1) == -1) {
+        perror("Проблема записи их канальчика, проблема на этапе обработки и передачи в конкреьный ффункционал chil");
+        exit(EXIT_FAILURE);
+    }
+
+    close(read_f);
+    close(write_f);
 }
 
-std::string child1_process_func(const std::string& input) {
-    std::string work_phrase = input;
-    for (char& i : work_phrase) {
-        i = tolower(i);
+void ToLow(char * str){
+    for (int i =0; str[i] != '\0'; i++){
+        str[i] = std::tolower(static_cast<unsigned char>(str[i]));
     }
-    return work_phrase;
 }
 
-std::string child2_process_func(const std::string& input) {
-    std::istringstream work_phrase(input);
-    std::string word;
-    std::string result;
-    
-    while (work_phrase >> word) {
-        if (!result.empty()) {
-            result += ' ';
+void DeleteProbels(char *str) {
+    int i, j = 0;
+    int len = strlen(str);   
+    for (i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            if (i < len - 1 && str[i + 1] == ' ') {
+                continue;
+            }
         }
-        result += word;
+        str[j++] = str[i];
     }
-    
-    return result;
+    str[j] = '\0';
 }

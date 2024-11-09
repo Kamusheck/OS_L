@@ -1,16 +1,13 @@
-#include <iostream>
-#include <cctype>
-#include <unistd.h>
-#include <functional>
-#include <sstream>
-#include <string>
-
-#ifndef COMMON_HPP  
+#ifndef COMMON_HPP
 #define COMMON_HPP
 
+#include <cstring> 
+#include <iostream>
+#include <string>
+#include <unistd.h>
 
-std::string child1_process_func(const std::string& input);
-std::string child2_process_func(const std::string& input);
-void data_treatment(int read_fd, int write_fd, std::function<std::string(const std::string&)> procedd_func);
+void ToLow(char *str);
+void DeleteProbels(char *str);
+void DataTreatment(int argc, char *argv[], void (*StringOperation)(char *));
 
-#endif
+#endif 

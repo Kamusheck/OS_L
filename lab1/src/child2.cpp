@@ -1,6 +1,9 @@
-#include "child2.hpp"
 #include "commonchild.hpp"
+#include <cstring> // strlen
+#include <iostream>
+#include <unistd.h> // read, write
 
-void Child2(int read_fd, int write_fd) {
-    data_treatment(read_fd, write_fd, child2_process_func);
+int main(int argc, char *argv[]) {
+    DataTreatment(argc, argv, DeleteProbels);
+    return 0;
 }

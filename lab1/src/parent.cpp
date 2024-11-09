@@ -1,61 +1,48 @@
 #include "parent.hpp"
-#include "commonchild.hpp"
-#include "child1.hpp"
-#include "child2.hpp"
-#include <sys/wait.h> 
-#include <unistd.h>   
 
-void Parent() {
-    int pipe1[2];
-    int pipe2[2];
-
-    if (pipe(pipe1) == -1 || pipe(pipe2) == -1) {
-        perror("Error creating pipe");
-        return; 
+void Create(const char *pathChild, int read_fd[2], int write_fd[2]){
+    pid_t pid = fork();
+    if(pid == -1){
+        perror("Проблемка где то н ауровне форка");
+        exit(EXIT_FAILURE);
     }
-
-    pid_t child1 = fork();
-    if (child1 == -1) {
-        perror("Error creating child1 process");
-        return; 
-    }
-    if (child1 == 0) {
-        close(pipe1[1]);
-        close(pipe2[0]);
-        Child1(pipe1[0], pipe2[1]);
-        close(pipe2[1]);
-        return;
-    }
-
-    pid_t child2 = fork();
-    if (child2 == -1) {
-        perror("Error creating child2 process");
-        return; 
-    }
-    if (child2 == 0) {
-        close(pipe1[0]);
-        close(pipe2[1]);
-        Child2(pipe2[0], STDOUT_FILENO);
-        close(pipe2[0]);
-        return;
-    }
-
-    close(pipe1[0]);
-    close(pipe2[0]);
-
-    std::string phrase;
-    while (true) {
-        std::cout << "Enter phrase or 'exit' to finish: ";
-        std::getline(std::cin, phrase);
-        if (phrase == "exit") {
-            break;
-        }
-        if (write(pipe1[1], phrase.c_str(), phrase.size() + 1) == -1) {
-            perror("Error writing to pipe");
-            break;
+    if(pid == 0 ){
+        close(read_fd[1]);
+        close(write_fd[0]);
+        std::string read_s = std::to_string(read_fd[0]);
+        std::string write_s = std::to_string(write_fd[1]);
+        char *args[] = {const_cast<char *>(pathChild),read_s.data(), write_s.data(), nullptr};//const char-т.к. execv только в таком формате принимает, data - метод из вектора возвращает укащатель на массив
+        if(execvp(args[0], args)== -1){// отличие это execv то что он приниает путь или имя программы и сам массив
+            perror("Проболемка уже на уроыне экзека");
+            exit(EXIT_FAILURE);
         }
     }
+}
 
-    close(pipe1[1]);
+void Parent(const char *pathChild1, const char *pathChild2){
+    int pipe_ch1[2], pipe_ch2[2],pipe_ch[2];
+    if (pipe(pipe_ch1)== -1 || pipe(pipe_ch2)== -1 || pipe(pipe_ch) == -1){
+        std::cerr << "Упс, канальчики не хотятя работать и создаваться" << std::endl; // cerr - стандартный поток вывода ошибок, не зранится временно в буфере, выводится немедленно
+        exit(EXIT_FAILURE);
+    }
+    char input[256];
+    std::cin.getline(input, sizeof(input));
+    if (write(pipe_ch1[1], input, sizeof(input))== -1){
+        perror("Проблемка, ваша инфа не хочет идти в канал");
+        exit(EXIT_FAILURE);
+    };
+    close(pipe_ch1[1]);
+    Create(pathChild1, pipe_ch1, pipe_ch);
+    close(pipe_ch1[0]);
+    close(pipe_ch[1]);
+    Create(pathChild2, pipe_ch, pipe_ch2);
+    close(pipe_ch[0]);
+    close(pipe_ch2[1]);
 
+    if (read(pipe_ch2[0], input, sizeof(input)) == -1){
+        perror("Проблемка, я не хочк делиться своей инфой");
+        exit(EXIT_FAILURE);
+    };
+    close(pipe_ch2[0]);
+    std::cout << input << std::endl;
 }
