@@ -5,7 +5,7 @@
 #include <cmath>
 
 
- int PrimeCount(int A, int B);
- float SinIntegral(float A, float B, float e);
+extern "C" int PrimeCount(int A, int B);
+extern "C" float SinIntegral(float A, float B, float e);
 
  #endif //FN1_H

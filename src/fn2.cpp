@@ -1,6 +1,5 @@
 #include "fn2.hpp"
 
-
 int PrimeCount(int A, int B){
     std::vector<bool> isRight(std::sqrt(B) + 1, true);
     isRight[0] = false;
