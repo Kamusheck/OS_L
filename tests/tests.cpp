@@ -57,7 +57,7 @@ TEST(ParentChildIntegrationTests, ParentChild1Child2Test3) {
 }
 
 TEST(ParentChildIntegrationTests, ParentChild1Child2Test4) {
-    RunParentChildIntegrationTest("", "\n");
+    RunParentChildIntegrationTest("", "");
 }
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

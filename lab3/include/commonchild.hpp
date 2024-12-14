@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <cstdlib>
+#include <sstream>
 
 void ToLow(char *str);
 void DeleteProbels(char *str);
